@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reply">
+
+	<resultMap type="ReplyVO" id="ReplyResultMap">
+		<id property="replyNo" column="reply_no"></id>
+		<result property="ArticleNo" column="article_no"></result>
+		<result property="replyText" column="reply_text"></result>
+		<result property="replyWriter" column="reply_writer"></result>
+		<result property="regDate" column="reg_date"></result>
+		<result property="updateDate" column="update_date"></result>
+	</resultMap>
+	
+	<resultMap type="ArticleVO" id="ArticleResultMap">
+		<id property="articleNo" column="article_no"></id>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writer" column="writer"/>
+		<result property="regDate" column="regdate"/>
+		<result property="viewCnt" column="viewcnt"/>
+	</resultMap>
+
+	<select id="list" resultMap="ReplyResultMap">
+		SELECT reply_no
+			 , article_no
+			 , reply_text
+			 , reply_writer
+			 , reg_date
+			 , update_date
+		FROM TBL_REPLY
+		WHERE article_no = #{articleNo}
+		ORDER BY reply_no
+	</select>
+	
+	<insert id="create">
+		INSERT INTO TBL_REPLY (
+			article_no
+			, reply_text
+			, reply_writer
+		) VALUES (
+			#{articleNo}
+			, #{replyText}
+			, #{replyWriter}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE TBL_REPLY SET
+			reply_text = #{replyText}
+			, update_date = now()
+		WHERE reply_no = #{replyNo}
+	</update>
+	
+	<delete id="delete">
+		DELETE
+		FROM TBL_REPLY
+		WHERE reply_no = #{replyNo}
+	</delete>
+	
+	<select id="listPaging" resultMap="ReplyResultMap">
+		SELECT reply_no
+			 , article_no
+			 , reply_text
+			 , reply_writer
+			 , reg_date
+			 , update_date
+		FROM TBL_REPLY
+		WHERE article_no = #{articleNo}
+		ORDER BY reply_no
+		LIMIT #{criteria.pageStart}, #{criteria.perPageNum}
+	</select>
+	
+	<select id="countReplies" resultType="int">
+		SELECT COUNT(article_no)
+		FROM TBL_REPLY
+		WHERE article_no = #{articleNo}
+	</select>
+   
+</mapper>
